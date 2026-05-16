@@ -1,48 +1,64 @@
 document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('section');
-    const navDotsContainer = document.querySelector('.nav-indicator');
+    const navMenu = document.querySelector('.nav-menu');
+    const container = document.querySelector('.presentation-content');
 
-    // Create nav dots
-    sections.forEach((_, index) => {
-        const dot = document.createElement('div');
-        dot.classList.add('nav-dot');
-        if (index === 0) dot.classList.add('active');
-        dot.addEventListener('click', () => {
-            sections[index].scrollIntoView({ behavior: 'smooth' });
+    // Create nav items (Formal Index Style)
+    sections.forEach((section, index) => {
+        const title = section.getAttribute('data-title') || `Slide ${index + 1}`;
+        const navItem = document.createElement('div');
+        navItem.classList.add('nav-item');
+        if (index === 0) navItem.classList.add('active', 'completed');
+        
+        navItem.innerHTML = `
+            <span class="nav-number">${(index + 1).toString().padStart(2, '0')}</span>
+            <span class="nav-text">${title}</span>
+        `;
+        
+        navItem.addEventListener('click', () => {
+            section.scrollIntoView({ behavior: 'smooth' });
         });
-        navDotsContainer.appendChild(dot);
+        
+        navMenu.appendChild(navItem);
     });
 
-    const navDots = document.querySelectorAll('.nav-dot');
+    const navItems = document.querySelectorAll('.nav-item');
 
-    // Intersection Observer for active state and reveal animations
-    const observerOptions = {
-        threshold: 0.5
-    };
+    // Scroll synchronization
+    container.addEventListener('scroll', () => {
+        // Update active nav item and LED indicators
+        sections.forEach((section, index) => {
+            const rect = section.getBoundingClientRect();
+            // If the section is in view
+            if (rect.top >= -window.innerHeight / 2 && rect.top <= window.innerHeight / 2) {
+                navItems.forEach((item, i) => {
+                    item.classList.remove('active');
+                    // LED Logic: light up all dots up to the current one
+                    if (i <= index) {
+                        item.classList.add('completed');
+                    } else {
+                        item.classList.remove('completed');
+                    }
+                });
+                navItems[index].classList.add('active');
+            }
+        });
+    });
 
+    // Intersection Observer for reveal animations
     const observer = new IntersectionObserver((entries) => {
         entries.forEach(entry => {
             if (entry.isIntersecting) {
-                // Update dots
-                const index = Array.from(sections).indexOf(entry.target);
-                navDots.forEach(dot => dot.classList.remove('active'));
-                navDots[index].classList.add('active');
-
-                // Trigger animations
                 entry.target.classList.add('revealed');
             }
         });
-    }, observerOptions);
+    }, { threshold: 0.1 });
 
-    sections.forEach(section => {
-        observer.observe(section);
-    });
+    sections.forEach(section => observer.observe(section));
 
     // Keyboard navigation
     window.addEventListener('keydown', (e) => {
-        const activeSection = document.querySelector('section:hover') || sections[0]; // fallback
-        // Simple logic for next/prev based on scroll position
-        const currentScroll = document.querySelector('.presentation-container').scrollTop;
+        const currentScroll = container.scrollTop;
         const windowHeight = window.innerHeight;
         const currentIndex = Math.round(currentScroll / windowHeight);
 

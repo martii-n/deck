@@ -1,55 +1,57 @@
-/* Reveal Animations */
-section .glass-card {
+/* Generic Reveal Animations for Formal Theme */
+section > div {
     opacity: 0;
-    transform: translateY(50px) scale(0.95);
-    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+    transform: translateY(30px);
+    transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-section.revealed .glass-card {
+section.revealed > div {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
 }
 
-/* Staggered element reveals */
-section.revealed .stagger-1 { transition-delay: 0.1s; }
-section.revealed .stagger-2 { transition-delay: 0.2s; }
-section.revealed .stagger-3 { transition-delay: 0.3s; }
-
-/* Glowing effects */
-@keyframes pulse-glow {
-    0% { box-shadow: 0 0 5px rgba(6, 182, 212, 0.2); }
-    50% { box-shadow: 0 0 20px rgba(6, 182, 212, 0.5); }
-    100% { box-shadow: 0 0 5px rgba(6, 182, 212, 0.2); }
+/* Image reveal with slide effect */
+.image-container {
+    opacity: 0;
+    transform: translateX(20px);
+    transition: all 1s cubic-bezier(0.16, 1, 0.3, 1) 0.2s;
 }
 
-.glow-card {
-    animation: pulse-glow 4s infinite alternate;
+section.revealed .image-container {
+    opacity: 1;
+    transform: translateX(0);
 }
 
-/* Image reveal */
-.reveal-img {
+/* Staggered text content */
+section.revealed .info-point {
+    animation: fadeIn 0.8s both;
+}
+
+section.revealed .info-point:nth-child(1) { animation-delay: 0.3s; }
+section.revealed .info-point:nth-child(2) { animation-delay: 0.5s; }
+section.revealed .info-point:nth-child(3) { animation-delay: 0.7s; }
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Subtle Progress Line Aura */
+.nav-item.active .nav-text {
+    animation: textPulse 2s infinite alternate;
+}
+
+@keyframes textPulse {
+    from { color: var(--text-on-dark); }
+    to { color: var(--unjfsc-cyan); }
+}
+
+/* Clean Image Slide */
+.reveal-img-formal {
     clip-path: inset(0 100% 0 0);
     transition: clip-path 1.2s cubic-bezier(0.77, 0, 0.175, 1);
 }
 
-section.revealed .reveal-img {
+section.revealed .reveal-img-formal {
     clip-path: inset(0 0 0 0);
-}
-
-/* Text Shimmer */
-.shimmer {
-    background: linear-gradient(
-        90deg, 
-        rgba(255,255,255,0) 0%, 
-        rgba(255,255,255,0.2) 50%, 
-        rgba(255,255,255,0) 100%
-    );
-    background-size: 200% 100%;
-    animation: shimmer 3s infinite;
-    -webkit-background-clip: text;
-}
-
-@keyframes shimmer {
-    0% { background-position: -200% 0; }
-    100% { background-position: 200% 0; }
 }
